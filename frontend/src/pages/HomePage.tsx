@@ -9,7 +9,6 @@ import { getError } from "../utils";
 
 export default function HomePage() {
   const { data: products, isLoading, error } = useGetProductsQuery();
-  console.log(products);
 
   return isLoading ? (
     <LoadingBox />

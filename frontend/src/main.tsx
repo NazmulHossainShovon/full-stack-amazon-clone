@@ -1,31 +1,32 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import React from "react";
+import ReactDOM from "react-dom/client";
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
-} from 'react-router-dom'
-import { HelmetProvider } from 'react-helmet-async'
+} from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 // import 'bootstrap/dist/css/bootstrap.min.css'
-import App from './App'
-import './index.css'
-import HomePage from './pages/HomePage'
-import ProductPage from './pages/ProductPage'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { StoreProvider } from './Store'
-import CartPage from './pages/CartPage'
-import SigninPage from './pages/SigninPage'
-import SignupPage from './pages/SignupPage'
-import ShippingAddressPage from './pages/ShippingAddressPage'
-import PaymentMethodPage from './pages/PaymentMethodPage'
-import ProtectedRoute from './components/ProtectedRoute'
-import PlaceOrderPage from './pages/PlaceOrderPage'
-import OrderPage from './pages/OrderPage'
-import { PayPalScriptProvider } from '@paypal/react-paypal-js'
-import OrderHistoryPage from './pages/OrderHistoryPage'
-import ProfilePage from './pages/ProfilePage'
+import App from "./App";
+import "./index.css";
+import HomePage from "./pages/HomePage";
+import ProductPage from "./pages/ProductPage";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { StoreProvider } from "./Store";
+import CartPage from "./pages/CartPage";
+import SigninPage from "./pages/SigninPage";
+import SignupPage from "./pages/SignupPage";
+import ShippingAddressPage from "./pages/ShippingAddressPage";
+import PaymentMethodPage from "./pages/PaymentMethodPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PlaceOrderPage from "./pages/PlaceOrderPage";
+import OrderPage from "./pages/OrderPage";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import OrderHistoryPage from "./pages/OrderHistoryPage";
+import ProfilePage from "./pages/ProfilePage";
+import SearchResult from "./pages/SearchResult";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -35,6 +36,7 @@ const router = createBrowserRouter(
       <Route path="cart" element={<CartPage />} />
       <Route path="signin" element={<SigninPage />} />
       <Route path="signup" element={<SignupPage />} />
+      <Route path="search" element={<SearchResult />} />
       <Route path="" element={<ProtectedRoute />}>
         <Route path="shipping" element={<ShippingAddressPage />} />
         <Route path="payment" element={<PaymentMethodPage />} />
@@ -48,14 +50,14 @@ const router = createBrowserRouter(
       {/* ... etc. */}
     </Route>
   )
-)
+);
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <StoreProvider>
-      <PayPalScriptProvider options={{ 'client-id': 'sb' }} deferLoading={true}>
+      <PayPalScriptProvider options={{ "client-id": "sb" }} deferLoading={true}>
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>
             <RouterProvider router={router} />
@@ -65,4 +67,4 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       </PayPalScriptProvider>
     </StoreProvider>
   </React.StrictMode>
-)
+);
