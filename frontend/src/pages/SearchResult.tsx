@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Store } from "../Store";
 import { useGetProductsQuery } from "../hooks/productHooks";
 import { Product } from "../types/Product";
-import { Col } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import ProductItem from "../components/ProductItem";
 
 export default function SearchResult() {
@@ -19,12 +19,12 @@ export default function SearchResult() {
   }, [searchQuery]);
 
   return (
-    <div>
+    <Row>
       {filteredData!.map((product) => (
         <Col key={product.slug} sm={6} md={4} lg={3}>
           <ProductItem product={product} />
         </Col>
       ))}
-    </div>
+    </Row>
   );
 }
