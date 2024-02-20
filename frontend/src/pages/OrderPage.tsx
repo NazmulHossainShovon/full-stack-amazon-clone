@@ -3,70 +3,90 @@ import {
   PayPalButtonsComponentProps,
   SCRIPT_LOADING_STATE,
   usePayPalScriptReducer,
-} from '@paypal/react-paypal-js'
-import { useContext, useEffect } from 'react'
-import { Button, Card, Col, ListGroup, Row } from 'react-bootstrap'
-import { Helmet } from 'react-helmet-async'
-import { Link, useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import LoadingBox from '../components/LoadingBox'
-import MessageBox from '../components/MessageBox'
+} from "@paypal/react-paypal-js";
+import { useContext, useEffect, useState } from "react";
+import { Button, Card, Col, ListGroup, Row } from "react-bootstrap";
+import { Helmet } from "react-helmet-async";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import LoadingBox from "../components/LoadingBox";
+import MessageBox from "../components/MessageBox";
 import {
+  useDeliveredOrderMutation,
   useGetOrderDetailsQuery,
   useGetPaypalClientIdQuery,
   usePayOrderMutation,
-} from '../hooks/orderHooks'
-import { Store } from '../Store'
-import { ApiError } from '../types/ApiError'
-import { getError } from '../utils'
+} from "../hooks/orderHooks";
+import { Store } from "../Store";
+import { ApiError } from "../types/ApiError";
+import { getError } from "../utils";
 
 export default function OrderPage() {
-  const { state } = useContext(Store)
-  const { userInfo } = state
+  const { state } = useContext(Store);
+  const { userInfo } = state;
+  const [showReceivedButton, setShowReceivedButton] = useState(true);
 
-  const params = useParams()
-  const { id: orderId } = params
+  const params = useParams();
+  const { id: orderId } = params;
 
   const {
     data: order,
     isLoading,
     error,
     refetch,
-  } = useGetOrderDetailsQuery(orderId!)
+  } = useGetOrderDetailsQuery(orderId!);
 
-  const { mutateAsync: payOrder, isLoading: loadingPay } = usePayOrderMutation()
+  const { mutateAsync: payOrder, isLoading: loadingPay } =
+    usePayOrderMutation();
+
+  const { mutateAsync: deliverOrder } = useDeliveredOrderMutation();
 
   const testPayHandler = async () => {
-    await payOrder({ orderId: orderId! })
-    refetch()
-    toast.success('Order is paid')
-  }
+    await payOrder({ orderId: orderId! });
+    refetch();
+    toast.success("Order is paid");
+  };
 
-  const [{ isPending, isRejected }, paypalDispatch] = usePayPalScriptReducer()
+  const [{ isPending, isRejected }, paypalDispatch] = usePayPalScriptReducer();
 
-  const { data: paypalConfig } = useGetPaypalClientIdQuery()
+  const { data: paypalConfig } = useGetPaypalClientIdQuery();
+
+  const receivedOrderOnClick = async () => {
+    const result = await deliverOrder({ orderId: orderId });
+    if (result.order?.isDelivered) {
+      setShowReceivedButton(false);
+    }
+  };
 
   useEffect(() => {
     if (paypalConfig && paypalConfig.clientId) {
       const loadPaypalScript = async () => {
         paypalDispatch({
-          type: 'resetOptions',
+          type: "resetOptions",
           value: {
-            'client-id': paypalConfig!.clientId,
-            currency: 'USD',
+            "client-id": paypalConfig!.clientId,
+            currency: "USD",
           },
-        })
+        });
         paypalDispatch({
-          type: 'setLoadingStatus',
+          type: "setLoadingStatus",
           value: SCRIPT_LOADING_STATE.PENDING,
-        })
-      }
-      loadPaypalScript()
+        });
+      };
+      loadPaypalScript();
     }
-  }, [paypalConfig])
+  }, [paypalConfig]);
+
+  useEffect(() => {
+    if (order?.isDelivered) {
+      setShowReceivedButton(false);
+    } else {
+      setShowReceivedButton(true);
+    }
+  }, []);
 
   const paypalbuttonTransactionProps: PayPalButtonsComponentProps = {
-    style: { layout: 'vertical' },
+    style: { layout: "vertical" },
     createOrder(data, actions) {
       return actions.order
         .create({
@@ -79,24 +99,24 @@ export default function OrderPage() {
           ],
         })
         .then((orderID: string) => {
-          return orderID
-        })
+          return orderID;
+        });
     },
     onApprove(data, actions) {
       return actions.order!.capture().then(async (details) => {
         try {
-          await payOrder({ orderId: orderId!, ...details })
-          refetch()
-          toast.success('Order is paid successfully')
+          await payOrder({ orderId: orderId!, ...details });
+          refetch();
+          toast.success("Order is paid successfully");
         } catch (err) {
-          toast.error(getError(err as ApiError))
+          toast.error(getError(err as ApiError));
         }
-      })
+      });
     },
     onError: (err) => {
-      toast.error(getError(err as ApiError))
+      toast.error(getError(err as ApiError));
     },
-  }
+  };
 
   return isLoading ? (
     <LoadingBox></LoadingBox>
@@ -127,6 +147,11 @@ export default function OrderPage() {
                 </MessageBox>
               ) : (
                 <MessageBox variant="warning">Not Delivered</MessageBox>
+              )}
+              {showReceivedButton && (
+                <Button onClick={receivedOrderOnClick} variant="primary">
+                  Received My Product
+                </Button>
               )}
             </Card.Body>
           </Card>
@@ -159,7 +184,7 @@ export default function OrderPage() {
                           src={item.image}
                           alt={item.name}
                           className="img-fluid rounded thumbnail"
-                        ></img>{' '}
+                        ></img>{" "}
                         <Link to={`/product/${item.slug}`}>{item.name}</Link>
                       </Col>
                       <Col md={3}>
@@ -231,5 +256,5 @@ export default function OrderPage() {
         </Col>
       </Row>
     </div>
-  )
+  );
 }

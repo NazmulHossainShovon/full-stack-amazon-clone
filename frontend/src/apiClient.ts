@@ -1,24 +1,24 @@
-import axios from 'axios'
+import axios from "axios";
 
 const apiClient = axios.create({
   baseURL:
-    process.env.NODE_ENV === 'development' ? 'http://localhost:4000/' : '/',
+    process.env.NODE_ENV === "development" ? "http://localhost:4000/" : "/",
   headers: {
-    'Content-type': 'application/json',
+    "Content-type": "application/json",
   },
-})
+});
 
 apiClient.interceptors.request.use(
   async (config) => {
-    if (localStorage.getItem('userInfo'))
+    if (localStorage.getItem("userInfo"))
       config.headers.authorization = `Bearer ${
-        JSON.parse(localStorage.getItem('userInfo')!).token
-      }`
-    return config
+        JSON.parse(localStorage.getItem("userInfo")!).token
+      }`;
+    return config;
   },
   (error) => {
-    Promise.reject(error)
+    Promise.reject(error);
   }
-)
+);
 
-export default apiClient
+export default apiClient;
