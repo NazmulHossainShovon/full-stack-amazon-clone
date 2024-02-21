@@ -24,7 +24,7 @@ import { getError } from "../utils";
 export default function OrderPage() {
   const { state } = useContext(Store);
   const { userInfo } = state;
-  const [showReceivedButton, setShowReceivedButton] = useState(true);
+  const [showReceivedButton, setShowReceivedButton] = useState(false);
 
   const params = useParams();
   const { id: orderId } = params;
