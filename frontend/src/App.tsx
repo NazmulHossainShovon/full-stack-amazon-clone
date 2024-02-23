@@ -137,11 +137,11 @@ function App() {
               >
                 <i className="fas fa-bars"></i> All
               </Link>
-              {["Todays Deal", "Gifts", "On Sale"].map((x) => (
+              {["Todays Deal", "Gifts", "On-Sale"].map((x) => (
                 <Link
                   key={x}
                   className="nav-link header-link p-1 px-3"
-                  to={`/search?tag=${x}`}
+                  to={`/${x}`}
                 >
                   {x}
                 </Link>
