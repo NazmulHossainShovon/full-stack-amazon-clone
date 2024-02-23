@@ -22,19 +22,17 @@ import { ApiError } from "../types/ApiError";
 import { getError } from "../utils";
 
 export default function OrderPage() {
-  const { state } = useContext(Store);
-  const { userInfo } = state;
-  const [showReceivedButton, setShowReceivedButton] = useState(false);
-
   const params = useParams();
   const { id: orderId } = params;
-
+  const { state } = useContext(Store);
+  const { userInfo } = state;
   const {
     data: order,
     isLoading,
     error,
     refetch,
   } = useGetOrderDetailsQuery(orderId!);
+  const [showReceivedButton, setShowReceivedButton] = useState(false);
 
   const { mutateAsync: payOrder, isLoading: loadingPay } =
     usePayOrderMutation();
@@ -77,14 +75,6 @@ export default function OrderPage() {
     }
   }, [paypalConfig]);
 
-  useEffect(() => {
-    if (order?.isDelivered) {
-      setShowReceivedButton(false);
-    } else {
-      setShowReceivedButton(true);
-    }
-  }, []);
-
   const paypalbuttonTransactionProps: PayPalButtonsComponentProps = {
     style: { layout: "vertical" },
     createOrder(data, actions) {
@@ -118,6 +108,12 @@ export default function OrderPage() {
     },
   };
 
+  useEffect(() => {
+    if (order?.isDelivered === false) {
+      setShowReceivedButton(true);
+    }
+  }, [order?.isDelivered]);
+
   return isLoading ? (
     <LoadingBox></LoadingBox>
   ) : error ? (
@@ -148,7 +144,7 @@ export default function OrderPage() {
               ) : (
                 <MessageBox variant="warning">Not Delivered</MessageBox>
               )}
-              {showReceivedButton && (
+              {showReceivedButton === true && (
                 <Button onClick={receivedOrderOnClick} variant="primary">
                   Received My Product
                 </Button>
