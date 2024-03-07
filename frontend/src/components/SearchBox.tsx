@@ -11,7 +11,7 @@ export default function SearchBox() {
   const submitHandler = (e: React.SyntheticEvent) => {
     e.preventDefault();
     dispatch({ type: "SET_SEARCH_QUERY", payload: query });
-    navigate("/search");
+    navigate("/search-result");
   };
   return (
     <Form className="flex-grow-1 d-flex me-auto" onSubmit={submitHandler}>
