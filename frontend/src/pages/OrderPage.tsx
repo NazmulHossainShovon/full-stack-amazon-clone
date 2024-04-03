@@ -56,25 +56,6 @@ export default function OrderPage() {
     }
   };
 
-  useEffect(() => {
-    if (paypalConfig && paypalConfig.clientId) {
-      const loadPaypalScript = async () => {
-        paypalDispatch({
-          type: "resetOptions",
-          value: {
-            "client-id": paypalConfig!.clientId,
-            currency: "USD",
-          },
-        });
-        paypalDispatch({
-          type: "setLoadingStatus",
-          value: SCRIPT_LOADING_STATE.PENDING,
-        });
-      };
-      loadPaypalScript();
-    }
-  }, [paypalConfig]);
-
   const paypalbuttonTransactionProps: PayPalButtonsComponentProps = {
     style: { layout: "vertical" },
     createOrder(data, actions) {
